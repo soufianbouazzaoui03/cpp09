@@ -1,6 +1,19 @@
 #include "BitcoinExchange.hpp"
 
 
+BitcoinExchange::BitcoinExchange(){}
+
+BitcoinExchange::BitcoinExchange(BitcoinExchange& cpy) {
+    data = cpy.data;
+}
+BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange& cpy) {
+    if (this != &cpy) {
+        data = cpy.data;
+    }
+    return *this;
+}
+BitcoinExchange::~BitcoinExchange(){};
+
 std::string trim(const std::string& str) {
     size_t start = 0;
     while (start < str.size() && std::isspace(str[start])) {
@@ -15,15 +28,18 @@ std::string trim(const std::string& str) {
     return str.substr(start, end - start);
 }
 
-bool parsPrice(std::string str, double& price) {
+void    parsPrice(std::string str, double& price) {
     std::stringstream ss(str);
 
     ss >> price;
-    if (ss.fail() || !ss.eof())
-        return false;
-    if (price <= 0 || price >= 1000)
-        return false;
-    return true;
+    if (ss.fail() || !ss.eof()) {
+        throw 1;
+        return;
+    }
+    if (price <= 0 || price >= 1000) {
+        throw 2;
+        return;
+    }
 }
 
 bool parsDate(std::string date) {
@@ -50,13 +66,41 @@ bool parsDate(std::string date) {
     
 }
 
+bool isPriceValid(std::string input) {
+    if (input.empty())
+        return false;
+
+    bool hasDecimal = false;
+
+    if (!isdigit(input[0]) && input[0] != '+' && input[0] != '-')
+        return false;
+
+    for (size_t i = 1; i < input.size(); i++)
+    {
+        if (isdigit(input[i]))
+            continue;
+
+        if (input[i] == '.')
+        {
+            if (hasDecimal || i == 0 || i == input.size() - 1)
+                return false;
+            hasDecimal = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void BitcoinExchange::loadInPut(std::string fname) {
     std::ifstream file(fname);
     if (!file) {
         std::cerr << "Error: could not open file." << std::endl;
         return ;
     }
-
     std::string line;
     std::getline(file, line);
     if (line != "date | value")
@@ -76,16 +120,31 @@ void BitcoinExchange::loadInPut(std::string fname) {
             continue;
         }
         priceStr = trim(priceStr);
-        // try {
-        //     price = std::stod(priceStr);
-        // }catch(...){
-        //     std::cerr << "Error: bad input => " << line << std::endl;
-        //     continue;
-        // }
-        if (!parsPrice(priceStr, price)) {
-            std::cerr << (price < 0 ? "Error: not a positive number." : "Error: too large a number.") << std::endl;
+        if (!isPriceValid(priceStr)) {
+            std::cerr << "Error: bad input => " << line << std::endl;
             continue;
         }
+        //****
+        try {
+            price = std::stod(priceStr);
+        }catch(...){
+            std::cerr << "Error: bad input => " << line << std::endl;
+            continue;
+        }
+        //****
+        try {
+            parsPrice(priceStr, price);
+        }catch (int e){
+            if (e == 1)
+               std::cerr << "Error: bad input => " << line << std::endl; 
+            else
+                std::cerr << (price < 0 ? "Error: not a positive number." : "Error: too large a number.") << std::endl;
+            continue;
+        }
+
+        std::map<std::string, double>::iterator it = data.lower_bound(date);
+        std::cout << date << " => " << price << " = " << price * it->second << std::endl;
+
     }
 
 }
