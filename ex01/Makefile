@@ -1,7 +1,7 @@
 CPP = c++
 CPPFLAGS = -Wall -Wextra -Werror
-NAME = btc
-SRC = main.cpp BitcoinExchange.cpp
+NAME = RPN
+SRC = main.cpp RPN.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
@@ -9,7 +9,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(CPP) $(CPPFLAGS) $(OBJ) -o $(NAME)
 
-%.o: %.cpp BitcoinExchange.hpp
+%.o: %.cpp RPN.hpp
 	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 clean:
