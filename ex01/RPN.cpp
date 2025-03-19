@@ -10,11 +10,12 @@ RPN& RPN::operator=(RPN& cpy) {
     return *this;
 }
 void    RPN::parsInput(std::string str) {
-
+    if (str.empty()) {
+        throw std::runtime_error("empty input!");
+    }
     for (size_t i = 0; i < str.length(); i++) {
         if (!isdigit(str[i]) && !isspace(str[i]) && (str[i] != '+' && str[i] != '*' && str[i] != '/' && str[i] != '-')) {
-            std::cerr<<"bad input!\n";
-            exit(1);
+            throw std::runtime_error("bad input!");
         }
     }
 }
@@ -28,8 +29,7 @@ int calcul(int num1, int num2, char op) {
         return num1 * num2;
     else {
         if (num2 == 0) {
-            std::cerr<<"cant / by 0\n";
-            exit(1);
+            throw std::runtime_error("cant / by 0");
         }
         return num1 / num2;
     }
@@ -46,8 +46,7 @@ void    RPN::calculate(std::string str) {
             continue;
         }
         if (st.size() < 2) {
-            std::cerr<<"not enough numbers in stack\n";
-            exit(1);
+            throw std::runtime_error("not enough numbers in stack");
         }
         else {
             int num2 = st.top();
@@ -56,11 +55,10 @@ void    RPN::calculate(std::string str) {
             st.pop();
             st.push(calcul(num1, num2, str[i]));
         }
-        if (st.size() != 1)
-        {
-            std::cerr<<"error\n";
-            exit(1);
-        }
-        std::cout<<st.top();
     }
+    if (st.size() != 1)
+    {
+        throw std::runtime_error("error");
+    }
+    std::cout<<st.top();
 }
