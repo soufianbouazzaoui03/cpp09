@@ -1,7 +1,7 @@
 CPP = c++
 CPPFLAGS = -Wall -Wextra -Werror
 NAME = PmergeMe
-SRC = main.cpp #PmergeMe.cpp
+SRC = main.cpp PmergeMe.cpp
 OBJ = $(SRC:.cpp=.o)
 
 all: $(NAME)
