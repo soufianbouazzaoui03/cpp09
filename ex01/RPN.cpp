@@ -60,5 +60,5 @@ void    RPN::calculate(std::string str) {
     {
         throw std::runtime_error("error");
     }
-    std::cout<<st.top();
+    std::cout<<st.top()<<std::endl;
 }

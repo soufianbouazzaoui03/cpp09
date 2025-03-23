@@ -52,6 +52,10 @@ bool parsDate(std::string date) {
 
     if (date.empty() || date.length() != 10 || date[4] != '-' || date[7] != '-')
         return false;
+    for (size_t i = 0; i < date.size(); i++) {
+        if (!isdigit(date[i]) && date[i] != '-')
+            return false;
+    }
     if (std::getline(ss, yearStr, '-') && std::getline(ss, monthStr, '-') && std::getline(ss, dayStr)) {
         try {
             year = std::stoi(yearStr);
@@ -112,8 +116,12 @@ void BitcoinExchange::loadInPut(std::string fname) {
         std::string date, priceStr;
         double price;
 
-        if (!(std::getline(ss, date, '|') && std::getline(ss, priceStr)))
+        if (!(std::getline(ss, date, '|') && std::getline(ss, priceStr))) {
+            if (date.empty() || priceStr.empty()) {
+                 std::cerr << "Error: bad input => " << line << std::endl;
+            }
             continue;
+        }
         date = trim(date);
         if (!parsDate(date)) {
             std::cerr << "Error: bad input => " << line << std::endl;
@@ -143,6 +151,14 @@ void BitcoinExchange::loadInPut(std::string fname) {
         }
 
         std::map<std::string, double>::iterator it = data.lower_bound(date);
+        if (it == data.end() || it->first != date) {
+            if (it == data.begin())
+            {
+                std::cerr << "Error: no previous data available for " << date << std::endl;
+                continue;
+            }
+                --it;
+        }
         std::cout << date << " => " << price << " = " << price * it->second << std::endl;
 
     }

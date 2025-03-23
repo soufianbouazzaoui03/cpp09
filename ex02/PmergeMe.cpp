@@ -1,13 +1,23 @@
 #include "PmergeMe.hpp"
 
-static int s = 0;
+PmergeMe::PmergeMe(){}
+
+PmergeMe::~PmergeMe(){}
+
+PmergeMe::PmergeMe(PmergeMe& cpy){
+    (void)cpy;
+}
+PmergeMe& PmergeMe::operator=(PmergeMe& cpy) {
+    (void)cpy;
+    return *this;
+}
 
 static bool parseArg(const std::string& str) {
     if (str.empty())
         return false;
     
     size_t i = 0;
-    if (str[i] == '+' || str[i] == '-')
+    if (str[i] == '+')
         i++;
     
     if (i == str.size())
@@ -50,26 +60,11 @@ std::vector<int> jacobsequence1(int n) {
         if (num >= n) break;
             veq.push_back(num);
     }
-
-    // for (size_t i = 0; i < veq.size(); i++) {
-    //     full.push_back(veq[i]);
-    //     inserted.insert(veq[i]);
-
-    //     int backfill = veq[i] - 1;
-    //     while (backfill > 0 && inserted.find(backfill) == inserted.end()) {
-    //         full.push_back(backfill);
-    //         inserted.insert(backfill);
-    //         --backfill;
-    //     }
-    // }
-
     return veq;
 }
 
 std::deque<int> jacobsquence2(int n) {
     std::deque<int> veq;
-    // std::deque<int> full;
-    // std::set<int> inserted;
 
     if (n <= 0) return veq;
 
@@ -81,28 +76,16 @@ std::deque<int> jacobsquence2(int n) {
         if (num >= n) break;
             veq.push_back(num);
     }
-
-    // for (size_t i = 0; i < veq.size(); i++) {
-    //     full.push_back(veq[i]);
-    //     inserted.insert(veq[i]);
-
-    //     int backfill = veq[i] - 1;
-    //     while (backfill > 0 && inserted.find(backfill) == inserted.end()) {
-    //         full.push_back(backfill);
-    //         inserted.insert(backfill);
-    //         --backfill;
-    //     }
-    // }
     return veq;
 }
 
-void    print(std::vector<int>& vec, std::string str) {
-    std::cout<<str << s++ << std::endl;
-    for (size_t i = 0; i < vec.size(); i++) {
-        std::cout << vec[i] << " ";
-    }
-    std::cout<<"\n";
-}
+// void    print(std::vector<int>& vec, std::string str) {
+//     std::cout<<str << s++ << std::endl;
+//     for (size_t i = 0; i < vec.size(); i++) {
+//         std::cout << vec[i] << " ";
+//     }
+//     std::cout<<"\n";
+// }
 
 std::deque<int> merge(std::deque<int>& main, std::deque<int>& pend) {
     std::deque<int> jacobvec = jacobsquence2(pend.size());
@@ -145,12 +128,6 @@ void PmergeMe::sortDeq(std::deque<int>& deq) {
         big.push_back(deq.back());
     if (big.size() > 1)
         sortDeq(big);
-    // print(vec, "vec ");
-    // std::cout<<"----------------------\n";
-    // print(big, "big ");
-    // std::cout<<"----------------------\n";
-    // print(small, "small ");
-    // std::cout<<"----------------------\n";
     deq = merge(big, small);
 }
 
@@ -203,6 +180,3 @@ void PmergeMe::sortVec(std::vector<int>& vec) {
     // std::cout<<"----------------------\n";
     vec = merge(big, small);
 }
-// void PmergeMe::sortDeq(std::deque<int>& deq) {
-
-// }

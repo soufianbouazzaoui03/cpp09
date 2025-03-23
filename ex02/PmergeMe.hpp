@@ -10,6 +10,10 @@
 
 class PmergeMe {
     public:
+        PmergeMe();
+        PmergeMe(PmergeMe& cpy);
+        PmergeMe& operator=(PmergeMe& cpy);
+        ~PmergeMe();
         void    parse(int argc, char**argv, std::vector<int>& vec, std::deque<int>& deq);
         static void sortVec(std::vector<int>& vec);
         static void sortDeq(std::deque<int>& deq);
